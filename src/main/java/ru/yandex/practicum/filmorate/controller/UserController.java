@@ -20,7 +20,7 @@ public class UserController {
 
     @GetMapping()
     public List<User> getListUsers() {
-        if(manager.getUsers()==null) {
+        if (manager.getUsers() == null) {
             throw new ValidationException("error.size 0");
         }
         return manager.getUsers();
@@ -28,7 +28,7 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        if(manager.createUser(user) == null){
+        if (manager.createUser(user) == null) {
             throw new ValidationException("error.createUser");
         }
         return manager.createUser(user);

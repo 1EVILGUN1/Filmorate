@@ -79,7 +79,7 @@ public class Manager {
                 films.put(film.getId(), film);
                 logFilm.info("Film updated: {}", film);
                 return film;
-            }else{
+            } else {
                 return null;
             }
         } catch (ValidationException e) {
