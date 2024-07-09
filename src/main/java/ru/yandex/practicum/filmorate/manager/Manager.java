@@ -25,7 +25,7 @@ public class Manager {
     protected final Map<Integer, User> users = new HashMap<>();
     protected final Map<Integer, Film> films = new HashMap<>();
 
-    public User createUser(@NotNull User user) {
+    public User createUser(@NotNull User user) {// создание пользователя
         try {
             final int id = ++counterId;
             user.setId(id);
@@ -39,7 +39,7 @@ public class Manager {
         }
     }
 
-    public Film createFilm(@NotNull Film film) {
+    public Film createFilm(@NotNull Film film) {// создание фильма
         try {
             final int id = ++counterId;
             film.setId(id);
@@ -54,7 +54,7 @@ public class Manager {
     }
 
 
-    public User updateUser(User user) {
+    public User updateUser(User user) {// обновление пользователя
         try {
             checkUser(user);
             User updatedUser = users.get(user.getId());
@@ -71,7 +71,7 @@ public class Manager {
         }
     }
 
-    public Film updateFilm(Film film) {
+    public Film updateFilm(Film film) {// обновление фильма
         try {
             checkFilm(film);
             Film updatedFilm = films.get(film.getId());
@@ -88,7 +88,7 @@ public class Manager {
         }
     }
 
-    public List<User> getUsers() {
+    public List<User> getUsers() {// получение списка пользователей
         logUser.info("getUsers");
         if (users.isEmpty()) {
             return null;
@@ -96,7 +96,7 @@ public class Manager {
         return new ArrayList<>(users.values());
     }
 
-    public List<Film> getFilms() {
+    public List<Film> getFilms() {// получение списка фильмов
         logUser.info("getFilms");
         if (films.isEmpty()) {
             return null;
@@ -104,18 +104,18 @@ public class Manager {
         return new ArrayList<>(films.values());
     }
 
-    public User getUser(int id) {
+    public User getUser(int id) {// получение пользователя по id
         logUser.info("getUser {}", id);
         return users.get(id);
     }
 
-    public Film getFilm(int id) {
+    public Film getFilm(int id) {// получение фильма по id
         logUser.info("getFilm {}", id);
         return films.get(id);
     }
 
 
-    private void checkFilm(Film film) throws ValidationException {
+    private void checkFilm(Film film) throws ValidationException {// проверка фильма на ошибки
         if (film.getName().isBlank()) {
             throw new ValidationException("Название пустое");
         }
@@ -130,7 +130,7 @@ public class Manager {
         }
     }
 
-    private void checkUser(User user) throws ValidationException {
+    private void checkUser(User user) throws ValidationException {// проверка пользователя на ошибки
         if (!user.getEmail().contains("@") || user.getEmail().isBlank()) {
             throw new ValidationException("Не верный email");
         }
