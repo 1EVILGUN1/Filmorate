@@ -14,6 +14,7 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable("id") int id) {
+        if (id == 0) throw new ValidationException("id is zero");
         return manager.getFilm(id);
     }
 
