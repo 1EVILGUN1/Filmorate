@@ -15,7 +15,6 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable("id") int id) {
-        if (id == 0) throw new ValidationException("id is zero");
         return manager.getUser(id);
     }
 

@@ -18,13 +18,14 @@ import java.util.Map;
 public class Manager {
     private static final Logger logFilm = LoggerFactory.getLogger(Film.class);
     private static final Logger logUser = LoggerFactory.getLogger(User.class);
-    protected int counterId = 0;
+    protected int counterIdUser = -1;
+    protected int counterIdFilm = -1;
     protected final Map<Integer, User> users = new HashMap<>();
     protected final Map<Integer, Film> films = new HashMap<>();
 
     public User createUser(User user) {
         try {
-            final int id = ++counterId;
+            final int id = ++counterIdUser;
             user.setId(id);
             checkUser(user);
             users.put(id, user);
@@ -38,7 +39,7 @@ public class Manager {
 
     public Film createFilm(Film film) {
         try {
-            final int id = ++counterId;
+            final int id = ++counterIdFilm;
             film.setId(id);
             checkFilm(film);
             films.put(id, film);
@@ -118,6 +119,8 @@ public class Manager {
             throw new ValidationException("Не верный email");
         if (!(user.getLogin().replaceAll(" ", "").equals(user.getLogin())))
             throw new ValidationException("Не правильный логин");
+        if (user.getName() == null)
+            user.setName(user.getLogin());
         if (user.getBirthday().isAfter(LocalDate.now()))
             throw new ValidationException("День рождения указана в будущем времени");
     }
