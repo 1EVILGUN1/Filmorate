@@ -21,7 +21,6 @@ public class Manager {
     private static final Logger logUser = LoggerFactory.getLogger(User.class);
     protected int counterId = 0;
     private final int MAX_SIZE_DESCRIPTION = 200;
-    private final LocalDate MIN_DATE = LocalDate.parse("1895-12-28");
     protected final Map<Integer, User> users = new HashMap<>();
     protected final Map<Integer, Film> films = new HashMap<>();
 
@@ -62,9 +61,7 @@ public class Manager {
                 users.put(updatedUser.getId(), user);
                 logUser.info("User updated: {}", user);
                 return updatedUser;
-            } else {
-                return null;
-            }
+            } else return null;
         } catch (ValidationException e) {
             logUser.warn("User update failed: {}", e.getMessage());
             return null;
@@ -79,9 +76,7 @@ public class Manager {
                 films.put(film.getId(), film);
                 logFilm.info("Film updated: {}", film);
                 return film;
-            } else {
-                return null;
-            }
+            } else return null;
         } catch (ValidationException e) {
             logFilm.warn("Film update failed: {}", e.getMessage());
             return null;
@@ -90,17 +85,13 @@ public class Manager {
 
     public List<User> getUsers() {// получение списка пользователей
         logUser.info("getUsers");
-        if (users.isEmpty()) {
-            return null;
-        }
+        if (users.isEmpty()) return null;
         return new ArrayList<>(users.values());
     }
 
     public List<Film> getFilms() {// получение списка фильмов
         logUser.info("getFilms");
-        if (films.isEmpty()) {
-            return null;
-        }
+        if (films.isEmpty()) return null;
         return new ArrayList<>(films.values());
     }
 
@@ -116,30 +107,22 @@ public class Manager {
 
 
     private void checkFilm(Film film) throws ValidationException {// проверка фильма на ошибки
-        if (film.getName().isBlank()) {
+        if (film.getName().isBlank())
             throw new ValidationException("Название пустое");
-        }
-        if (film.getDescription().length() > MAX_SIZE_DESCRIPTION) {
-            throw new ValidationException("Описание фильма больше " + MAX_SIZE_DESCRIPTION + " символов");
-        }
-        if (film.getReleaseDate().isBefore(MIN_DATE)) {
-            throw new ValidationException("Дата релиза фильма раньше " + MIN_DATE);
-        }
-        if (film.getDuration() < 1) {
+        if (film.getDescription().length() > 200)
+            throw new ValidationException("Описание фильма больше " + 200 + " символов");
+        if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28")))
+            throw new ValidationException("Дата релиза фильма раньше " + LocalDate.parse("1895-12-28"));
+        if (film.getDuration() < 1)
             throw new ValidationException("Продолжительность фильма должна быть больше или равна 1 минуте");
-        }
     }
 
     private void checkUser(User user) throws ValidationException {// проверка пользователя на ошибки
-        if (!user.getEmail().contains("@") || user.getEmail().isBlank()) {
+        if (!user.getEmail().contains("@") || user.getEmail().isBlank())
             throw new ValidationException("Не верный email");
-        }
-
-        if (!(user.getLogin().replaceAll(" ", "").equals(user.getLogin()))) {
+        if (!(user.getLogin().replaceAll(" ", "").equals(user.getLogin())))
             throw new ValidationException("Не правильный логин");
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
+        if (user.getBirthday().isAfter(LocalDate.now()))
             throw new ValidationException("День рождения указана в будущем времени");
-        }
     }
 }
