@@ -16,86 +16,94 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class Manager{
+public class Manager {
     private static final Logger logFilm = LoggerFactory.getLogger(Film.class);
     private static final Logger logUser = LoggerFactory.getLogger(User.class);
     protected int counterId = 0;
     protected final Map<Integer, User> users = new HashMap<>();
     protected final Map<Integer, Film> films = new HashMap<>();
 
-    public User createUser(@NotNull User user){// создание пользователя
-        try{
+    public User createUser(@NotNull User user) {// создание пользователя
+        try {
             final int id = ++counterId;
             user.setId(id);
             checkUser(user);
             users.put(id, user);
             logUser.info("User created: {}", user);
             return user;
-        }catch (ValidationException e){
+        } catch (ValidationException e) {
             logUser.warn("User creation failed: {}", e.getMessage());
             return null;
         }
     }
-    public Film createFilm(@NotNull Film film){// создание фильма
-        try{
+
+    public Film createFilm(@NotNull Film film) {// создание фильма
+        try {
             final int id = ++counterId;
             film.setId(id);
             checkFilm(film);
             films.put(id, film);
             logFilm.info("Film created: {}", film);
             return film;
-        }catch (ValidationException e){
+        } catch (ValidationException e) {
             logFilm.warn("Film creation failed {}", e.getMessage());
             return null;
         }
     }
-    public User updateUser(User user){// обновление пользователя
-        try{
+
+    public User updateUser(User user) {// обновление пользователя
+        try {
             checkUser(user);
             User updatedUser = users.get(user.getId());
             if (updatedUser != null) {
                 users.put(updatedUser.getId(), user);
                 logUser.info("User updated: {}", user);
                 return updatedUser;
-            }else return null;
-        }catch (ValidationException e){
+            } else return null;
+        } catch (ValidationException e) {
             logUser.warn("User update failed: {}", e.getMessage());
             return null;
         }
     }
-    public Film updateFilm(Film film){// обновление фильма
-        try{
+
+    public Film updateFilm(Film film) {// обновление фильма
+        try {
             checkFilm(film);
             Film updatedFilm = films.get(film.getId());
             if (updatedFilm != null) {
                 films.put(film.getId(), film);
                 logFilm.info("Film updated: {}", film);
                 return film;
-            }else return null;
-        }catch (ValidationException e){
+            } else return null;
+        } catch (ValidationException e) {
             logFilm.warn("Film update failed: {}", e.getMessage());
             return null;
         }
     }
-    public List<User> getUsers(){// получение списка пользователей
+
+    public List<User> getUsers() {// получение списка пользователей
         logUser.info("getUsers");
         if (users.isEmpty()) return null;
         return new ArrayList<>(users.values());
     }
-    public List<Film> getFilms(){// получение списка фильмов
+
+    public List<Film> getFilms() {// получение списка фильмов
         logUser.info("getFilms");
         if (films.isEmpty()) return null;
         return new ArrayList<>(films.values());
     }
-    public User getUser(int id){// получение пользователя по id
+
+    public User getUser(int id) {// получение пользователя по id
         logUser.info("getUser {}", id);
         return users.get(id);
     }
-    public Film getFilm(int id){// получение фильма по id
+
+    public Film getFilm(int id) {// получение фильма по id
         logUser.info("getFilm {}", id);
         return films.get(id);
     }
-    private void checkFilm(Film film) throws ValidationException{// проверка фильма на ошибки
+
+    private void checkFilm(Film film) throws ValidationException {// проверка фильма на ошибки
         if (film.getName().isBlank())
             throw new ValidationException("Название пустое");
         if (film.getDescription().length() > 200)
@@ -105,7 +113,8 @@ public class Manager{
         if (film.getDuration() < 1)
             throw new ValidationException("Продолжительность фильма должна быть больше или равна 1 минуте");
     }
-    private void checkUser(User user) throws ValidationException{// проверка пользователя на ошибки
+
+    private void checkUser(User user) throws ValidationException {// проверка пользователя на ошибки
         if (!user.getEmail().contains("@") || user.getEmail().isBlank())
             throw new ValidationException("Не верный email");
         if (!(user.getLogin().replaceAll(" ", "").equals(user.getLogin())))
