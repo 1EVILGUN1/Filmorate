@@ -23,7 +23,7 @@ public class Manager {
     protected final Map<Integer, User> users = new HashMap<>();
     protected final Map<Integer, Film> films = new HashMap<>();
 
-    public User createUser(@NotNull User user) {
+    public User createUser(User user) {
         try {
             final int id = ++counterId;
             user.setId(id);
@@ -37,7 +37,7 @@ public class Manager {
         }
     }
 
-    public Film createFilm(@NotNull Film film) {
+    public Film createFilm(Film film) {
         try {
             final int id = ++counterId;
             film.setId(id);
