@@ -23,7 +23,7 @@ public class Manager {
     protected final Map<Integer, User> users = new HashMap<>();
     protected final Map<Integer, Film> films = new HashMap<>();
 
-    public User createUser(@NotNull User user) {// создание пользователя
+    public User createUser(@NotNull User user) {
         try {
             final int id = ++counterId;
             user.setId(id);
@@ -37,7 +37,7 @@ public class Manager {
         }
     }
 
-    public Film createFilm(@NotNull Film film) {// создание фильма
+    public Film createFilm(@NotNull Film film) {
         try {
             final int id = ++counterId;
             film.setId(id);
@@ -51,7 +51,7 @@ public class Manager {
         }
     }
 
-    public User updateUser(User user) {// обновление пользователя
+    public User updateUser(User user) {
         try {
             checkUser(user);
             User updatedUser = users.get(user.getId());
@@ -66,7 +66,7 @@ public class Manager {
         }
     }
 
-    public Film updateFilm(Film film) {// обновление фильма
+    public Film updateFilm(Film film) {
         try {
             checkFilm(film);
             Film updatedFilm = films.get(film.getId());
@@ -81,29 +81,29 @@ public class Manager {
         }
     }
 
-    public List<User> getUsers() {// получение списка пользователей
+    public List<User> getUsers() {
         logUser.info("getUsers");
         if (users.isEmpty()) return null;
         return new ArrayList<>(users.values());
     }
 
-    public List<Film> getFilms() {// получение списка фильмов
+    public List<Film> getFilms() {
         logUser.info("getFilms");
         if (films.isEmpty()) return null;
         return new ArrayList<>(films.values());
     }
 
-    public User getUser(int id) {// получение пользователя по id
+    public User getUser(int id) {
         logUser.info("getUser {}", id);
         return users.get(id);
     }
 
-    public Film getFilm(int id) {// получение фильма по id
+    public Film getFilm(int id) {
         logUser.info("getFilm {}", id);
         return films.get(id);
     }
 
-    private void checkFilm(Film film) throws ValidationException {// проверка фильма на ошибки
+    private void checkFilm(Film film) throws ValidationException {
         if (film.getName().isBlank())
             throw new ValidationException("Название пустое");
         if (film.getDescription().length() > 200)
@@ -114,7 +114,7 @@ public class Manager {
             throw new ValidationException("Продолжительность фильма должна быть больше или равна 1 минуте");
     }
 
-    private void checkUser(User user) throws ValidationException {// проверка пользователя на ошибки
+    private void checkUser(User user) throws ValidationException {
         if (!user.getEmail().contains("@") || user.getEmail().isBlank())
             throw new ValidationException("Не верный email");
         if (!(user.getLogin().replaceAll(" ", "").equals(user.getLogin())))
