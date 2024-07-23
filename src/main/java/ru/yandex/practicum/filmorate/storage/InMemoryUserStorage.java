@@ -27,6 +27,7 @@ public class InMemoryUserStorage implements UserStorage {
         logUser.info("GET Запрос на создание пользователя выполнен {} ", user);
         return user;
     }
+
     @Override
     public User updateUser(User user) {
         checkUser(user);
@@ -40,11 +41,13 @@ public class InMemoryUserStorage implements UserStorage {
             return null;
         }
     }
+
     @Override
     public List<User> getUsers() {
         logUser.info("GET Запрос выполняется на получение списка пользователей");
         return new ArrayList<>(users.values());
     }
+
     @Override
     public User getUser(int id) {
         logUser.info("GET Запрос выполняется на получение пользователя по id: {}", id);
