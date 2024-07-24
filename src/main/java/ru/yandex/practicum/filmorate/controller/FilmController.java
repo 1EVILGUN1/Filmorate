@@ -1,62 +1,55 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
-    private final InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
 
-    public FilmController(final FilmService filmService) {
-        this.filmService = filmService;
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Film createFilm(@RequestBody Film film) {
+        return filmService.createFilm(film);
+    }
+
+    @PutMapping
+    public Film updateFilm(@RequestBody Film film) {
+        return filmService.updateFilm(film);
     }
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable("id") int id) {
-        return filmStorage.getFilm(id);
+        return filmService.getFilm(id);
     }
 
     @GetMapping()
     public List<Film> getListFilms() {
-        return filmStorage.getFilms();
+        return filmService.getFilms();
     }
 
-    @GetMapping("/popular?count={count}")
-    public List<Film> getPopularFilms(@PathVariable("count") int count) {
-        if (count == 0) {
-            count = 10;
-        }
-        return filmService.popularFilms(count);
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        return filmService.getPopularFilm(count);
     }
 
-    @PostMapping
-    public Film createFilmWeb(@RequestBody Film film) {
-        return filmStorage.createFilm(film);
-    }
-
-    @PutMapping
-    public Film updateFilmWeb(@RequestBody Film film) {
-        if (filmStorage.updateFilm(film) == null) {
-            throw new ValidationException("PUT Запрос на изменение фильма не выполнен");
-        }
-        return filmStorage.updateFilm(film);
-    }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film likeFilm(@PathVariable("id") int id, @PathVariable("userId") int userId) {
-        filmService.createLike(id);
-        return filmStorage.getFilm(id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addLikeFilm(@PathVariable("id") int id, @PathVariable("userId") int userId) {
+        filmService.addLikeFilm(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable("id") int id, @PathVariable("userId") int userId) {
-        filmService.deleteLike(id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeLikeFilm(@PathVariable("id") int id, @PathVariable("userId") int userId) {
+        filmService.removeLikeFilm(id, userId);
     }
 }

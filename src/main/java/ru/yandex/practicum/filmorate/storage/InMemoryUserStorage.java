@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -12,19 +12,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private static final Logger logUser = LoggerFactory.getLogger(User.class);
     protected int counterId = 0;
-    protected final Map<Integer, User> users = new HashMap<>();
+    protected final Map<Long, User> users = new HashMap<>();
 
     @Override
     public User createUser(User user) {
-        final int id = ++counterId;
+        final long id = ++counterId;
         user.setId(id);
         checkUser(user);
         users.put(id, user);
-        logUser.info("GET Запрос на создание пользователя выполнен {} ", user);
+        log.info("GET Запрос на создание пользователя выполнен {} ", user);
         return user;
     }
 
@@ -34,23 +34,25 @@ public class InMemoryUserStorage implements UserStorage {
         User updatedUser = users.get(user.getId());
         if (updatedUser != null) {
             users.put(updatedUser.getId(), user);
-            logUser.info("PUT Запрос пользователь успешно изменен {}", user);
+            log.info("PUT Запрос пользователь успешно изменен {}", user);
             return updatedUser;
         } else {
-            logUser.info("PUT Запрос данного пользователя не существует {}", user);
-            return null;
+            throw new NotFoundException("Пользователь с ID = " + user.getId() + " не найден");
         }
     }
 
     @Override
     public List<User> getUsers() {
-        logUser.info("GET Запрос выполняется на получение списка пользователей");
+        log.info("GET Запрос выполняется на получение списка пользователей");
         return new ArrayList<>(users.values());
     }
 
     @Override
-    public User getUser(int id) {
-        logUser.info("GET Запрос выполняется на получение пользователя по id: {}", id);
+    public User getUser(long id) {
+        if (users.get(id) == null) {
+            throw new NotFoundException("Пользователь с ID = " + id + " не найден");
+        }
+        log.info("GET Запрос выполняется на получение пользователя по id: {}", id);
         return users.get(id);
     }
 
@@ -62,7 +64,7 @@ public class InMemoryUserStorage implements UserStorage {
             throw new ValidationException("Не правильный логин");
         }
         if (user.getName() == null) {
-            logUser.info("Изменение имени пользователя на его логин {}", user.getLogin());
+            log.info("Изменение имени пользователя на его логин {}", user.getLogin());
             user.setName(user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {

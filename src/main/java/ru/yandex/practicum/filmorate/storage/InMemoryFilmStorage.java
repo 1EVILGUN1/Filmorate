@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,19 +11,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private static final Logger logFilm = LoggerFactory.getLogger(Film.class);
     private int counterId = 0;
-    private final Map<Integer, Film> films = new HashMap<>();
+    private final Map<Long, Film> films = new HashMap<>();
 
     @Override
     public Film createFilm(Film film) {
-        final int id = ++counterId;
+        final long id = ++counterId;
         film.setId(id);
         checkFilm(film);
         films.put(id, film);
-        logFilm.info("GET Запрос на создание фильма выполнен: {}", film);
+        log.info("GET Запрос на создание фильма выполнен: {}", film);
         return film;
     }
 
@@ -34,7 +33,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film updatedFilm = films.get(film.getId());
         if (updatedFilm != null) {
             films.put(film.getId(), film);
-            logFilm.info("PUT Запрос на изменение фильма выполнен: {}", film);
+            log.info("PUT Запрос на изменение фильма выполнен: {}", film);
             return film;
         } else {
             return null;
@@ -43,13 +42,13 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getFilms() {
-        logFilm.info("GET Запрос выполняется на получение списка фильмов");
+        log.info("GET Запрос выполняется на получение списка фильмов");
         return new ArrayList<>(films.values());
     }
 
     @Override
-    public Film getFilm(int id) {
-        logFilm.info("GET Запрос выполняется на получение фильма по id {}", id);
+    public Film getFilm(long id) {
+        log.info("GET Запрос выполняется на получение фильма по id {}", id);
         return films.get(id);
     }
 
