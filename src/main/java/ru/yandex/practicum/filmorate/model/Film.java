@@ -35,6 +35,6 @@ public class Film {
     @Positive(groups = Default.class)
     private Integer duration;
 
-    private Set<Long> LikesFilm = new HashSet<>();
+    private Set<Long> likesFilm = new HashSet<>();
 
 }
