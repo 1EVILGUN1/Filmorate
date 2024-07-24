@@ -17,25 +17,25 @@ import java.util.List;
 public class ErrorHandler {
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidation(final ValidationException exception) {
-        log.warn(exception.getMessage(), exception);
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, "Ошибка валидации", exception.getMessage());
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFound(final NotFoundException exception) {
-        log.warn(exception.getMessage(), exception);
-        return new ErrorResponse(HttpStatus.NOT_FOUND, "Не найдена сущность", exception.getMessage());
+    public ErrorResponse handleNotFound(final NotFoundException e) {
+        log.warn(e.getMessage(), e);
+        return new ErrorResponse(HttpStatus.NOT_FOUND, "Не найдена сущность", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ValidationErrorResponse handleConstraintValidationException(final ConstraintViolationException exception) {
-        log.warn(exception.getMessage(), exception);
+    public ErrorResponse handleValidation(final ValidationException e) {
+        log.warn(e.getMessage(), e);
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, "Ошибка валидации", e.getMessage());
+    }
 
-        final List<Violation> violations = exception.getConstraintViolations().stream()
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ValidationErrorResponse handleConstraintValidationException(final ConstraintViolationException e) {
+        log.warn(e.getMessage(), e);
+
+        final List<Violation> violations = e.getConstraintViolations().stream()
                 .map(violation -> new Violation(violation.getPropertyPath().toString(), violation.getMessage()))
                 .toList();
 
@@ -44,10 +44,10 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ValidationErrorResponse handleMethodArgumentNotValid(final MethodArgumentNotValidException exception) {
-        log.warn(exception.getMessage(), exception);
+    public ValidationErrorResponse handleMethodArgumentNotValid(final MethodArgumentNotValidException e) {
+        log.warn(e.getMessage(), e);
 
-        final List<Violation> violations = exception.getBindingResult().getFieldErrors().stream()
+        final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
                 .toList();
 
@@ -56,8 +56,8 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleOther(final Throwable exception) {
-        log.warn(exception.getMessage(), exception);
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Неизвестная ошибка", exception.getMessage());
+    public ErrorResponse handleOther(final Throwable e) {
+        log.warn(e.getMessage(), e);
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Неизвестная ошибка", e.getMessage());
     }
 }

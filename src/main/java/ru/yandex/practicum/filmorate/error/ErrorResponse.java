@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-@RequiredArgsConstructor
 @Getter
+@RequiredArgsConstructor
 public class ErrorResponse {
     private final HttpStatus status;
     private final String error;

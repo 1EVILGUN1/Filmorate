@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.validator.group.Create;
+import ru.yandex.practicum.filmorate.validator.group.Default;
+
 
 import java.util.List;
 
@@ -17,11 +21,13 @@ import java.util.List;
 public class UserService {
     private final UserStorage userStorage;
 
-    public User createUser(User user) {
+    @Validated({Create.class, Default.class})
+    public User createUser(@Valid User user) {
         return userStorage.createUser(user);
     }
 
-    public User updateUser(User user) {
+    @Validated({Create.class, Default.class})
+    public User updateUser(@Valid User user) {
         return userStorage.updateUser(user);
     }
 
@@ -38,7 +44,6 @@ public class UserService {
         List<User> friends = user.getFriends().stream()
                 .map(userStorage::getUser)
                 .toList();
-
         log.trace("GET Запрос на список друзей пользователя с ID = {}\n{}", userId, friends);
         return friends;
     }
