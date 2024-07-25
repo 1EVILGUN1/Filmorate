@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.validator.group.Create;
-import ru.yandex.practicum.filmorate.validator.group.Default;
 
 
 import java.util.List;
@@ -21,17 +18,15 @@ import java.util.List;
 public class UserService {
     private final UserStorage userStorage;
 
-    @Validated({Create.class, Default.class})
-    public User createUser(@Valid User user) {
+    public User createUser(User user) {
         return userStorage.createUser(user);
     }
 
-    @Validated({Create.class, Default.class})
-    public User updateUser(@Valid User user) {
+    public User updateUser(User user) {
         return userStorage.updateUser(user);
     }
 
-    public User getUser(int id) {
+    public User getUser(long id) {
         return userStorage.getUser(id);
     }
 
@@ -48,19 +43,19 @@ public class UserService {
         return friends;
     }
 
-    public void addFriend(@Positive long userId, @Positive long friendId) {
+    public void addFriend(long userId, long friendId) {
         userStorage.getUser(userId).getFriends().add(friendId);
         userStorage.getUser(friendId).getFriends().add(userId);
         log.debug("PUT Запрос. Пользователи с ID = {} и {} стали друзьями", userId, friendId);
     }
 
-    public void removeFriend(@Positive long userId, @Positive long friendId) {
+    public void removeFriend(long userId, long friendId) {
         userStorage.getUser(userId).getFriends().remove(friendId);
         userStorage.getUser(friendId).getFriends().remove(userId);
         log.debug("DELETE Запрос. Пользователь с ID = {} удалил друга с ID = {}", userId, friendId);
     }
 
-    public List<User> getCommonFriends(@Positive long userId, @Positive long otherId) {
+    public List<User> getCommonFriends(long userId, long otherId) {
         List<User> commonFriends = userStorage.getUser(userId).getFriends().stream()
                 .filter(friendId -> userStorage.getUser(otherId).getFriends().contains(friendId))
                 .map(userStorage::getUser)
