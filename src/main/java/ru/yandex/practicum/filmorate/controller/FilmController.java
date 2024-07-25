@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.validator.group.Create;
 import ru.yandex.practicum.filmorate.validator.group.Default;
+import ru.yandex.practicum.filmorate.validator.group.Update;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody @Validated({Create.class, Default.class}) Film film) {
+    public Film updateFilm(@RequestBody @Validated({Update.class, Default.class}) Film film) {
         log.info("PUT запрос на изменение фильма {}", film);
         return filmService.updateFilm(film);
     }

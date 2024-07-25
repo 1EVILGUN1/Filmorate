@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.validator.group.Create;
 import ru.yandex.practicum.filmorate.validator.group.Default;
+import ru.yandex.practicum.filmorate.validator.group.Update;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody @Validated({Create.class, Default.class}) User user) {
+    public User updateUser(@RequestBody @Validated({Update.class, Default.class}) User user) {
         log.info("PUT Запрос на обновление данных пользователя {}", user);
         return userService.updateUser(user);
     }
