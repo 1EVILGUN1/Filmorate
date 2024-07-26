@@ -1,94 +1,69 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.validator.group.Create;
+import ru.yandex.practicum.filmorate.validator.group.Default;
+import ru.yandex.practicum.filmorate.validator.group.Update;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/films")
 public class FilmController {
-    private static final Logger logFilm = LoggerFactory.getLogger(Film.class);
-    private int counterId = 0;
-    private final Map<Integer, Film> films = new HashMap<>();
+    private final FilmService filmService;
 
-    private Film createFilm(Film film) {
-        final int id = ++counterId;
-        film.setId(id);
-        checkFilm(film);
-        films.put(id, film);
-        logFilm.info("GET Запрос на создание фильма выполнен: {}", film);
-        return film;
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Film createFilm(@RequestBody @Validated({Create.class, Default.class}) Film film) {
+        log.info("POST Запрос на создание фильма {}", film);
+        return filmService.createFilm(film);
     }
 
-    private Film updateFilm(Film film) {
-        checkFilm(film);
-        Film updatedFilm = films.get(film.getId());
-        if (updatedFilm != null) {
-            films.put(film.getId(), film);
-            logFilm.info("PUT Запрос на изменение фильма выполнен: {}", film);
-            return film;
-        } else {
-            return null;
-        }
-    }
-
-    private List<Film> getFilms() {
-        logFilm.info("GET Запрос выполняется на получение списка фильмов");
-        return new ArrayList<>(films.values());
-    }
-
-    private Film getFilm(int id) {
-        logFilm.info("GET Запрос выполняется на получение фильма по id {}", id);
-        return films.get(id);
-    }
-
-    private void checkFilm(Film film) throws ValidationException {
-        if (film.getName().isBlank()) {
-            throw new ValidationException("Название пустое");
-        }
-        if (film.getDescription().length() > 200) {
-            throw new ValidationException("Описание фильма больше " + 200 + " символов");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
-            throw new ValidationException("Дата релиза фильма раньше " + LocalDate.parse("1895-12-28"));
-        }
-        if (film.getDuration() < 1) {
-            throw new ValidationException("Продолжительность фильма должна быть больше или равна 1 минуте");
-        }
+    @PutMapping
+    public Film updateFilm(@RequestBody @Validated({Update.class, Default.class}) Film film) {
+        log.info("PUT запрос на изменение фильма {}", film);
+        return filmService.updateFilm(film);
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable("id") int id) {
-        logFilm.info("GET Запрос на поиск фильма по id: {}", id);
-        return getFilm(id);
+    public Film getFilmById(@PathVariable("id") @Positive long id) {
+        log.info("GET Запрос на получение фильма по id {}", id);
+        return filmService.getFilm(id);
     }
 
     @GetMapping()
     public List<Film> getListFilms() {
-        logFilm.info("GET Запрос на получение списка фильмов");
-        return getFilms();
+        log.info("GET Запрос на получение списка фильмов");
+        return filmService.getFilms();
     }
 
-    @PostMapping
-    public Film createFilmWeb(@RequestBody Film film) {
-        logFilm.info("POST Запрос на добавление фильма: {}", film);
-        return createFilm(film);
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") @Positive int count) {
+        log.info("GET Запрос на получение фильмов по популярности количество {}", count);
+        return filmService.getPopularFilm(count);
     }
 
-    @PutMapping
-    public Film updateFilmWeb(@RequestBody Film film) {
-        logFilm.info("PUT Запрос на изменение фильма: {}", film);
-        if (updateFilm(film) == null) {
-            throw new ValidationException("PUT Запрос на изменение фильма не выполнен");
-        }
-        return updateFilm(film);
+
+    @PutMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addLikeFilm(@PathVariable("id") @Positive long id, @PathVariable("userId") @Positive long userId) {
+        log.info("PUT Запрос на добавление лайка фильму. Фильм id {}. Пользователь id {}", id, userId);
+        filmService.addLikeFilm(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeLikeFilm(@PathVariable("id") @Positive long id, @PathVariable("userId") @Positive long userId) {
+        log.info("DELETE Запрос на удаление лайка у фильма {}. Пользователь id {}", id, userId);
+        filmService.removeLikeFilm(id, userId);
     }
 }
