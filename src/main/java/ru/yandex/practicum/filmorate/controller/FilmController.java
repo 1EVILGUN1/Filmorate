@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.validator.group.Create;
 import ru.yandex.practicum.filmorate.validator.group.Default;
 import ru.yandex.practicum.filmorate.validator.group.Update;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
