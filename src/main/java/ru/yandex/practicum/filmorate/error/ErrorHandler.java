@@ -55,6 +55,13 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleLikesNotFond(LayerInstantiationException e) {
+        log.error(e.getMessage());
+        return new ErrorResponse(HttpStatus.NOT_FOUND, "Рейтинг не найден", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleOther(final Throwable e) {
         log.warn(e.getMessage(), e);

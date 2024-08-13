@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validator.annotation.NotWriteSpace;
 import ru.yandex.practicum.filmorate.validator.annotation.NullOrNotBlank;
@@ -13,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
 public class User {
     @NotNull(groups = Update.class)
     @Positive(groups = Update.class)
@@ -33,5 +35,6 @@ public class User {
     @PastOrPresent(groups = Default.class)
     private LocalDate birthday;
 
-    private Set<Long> friends = new HashSet<>();
+    @NotNull
+    private final Set<Long> friends = new HashSet<>();
 }

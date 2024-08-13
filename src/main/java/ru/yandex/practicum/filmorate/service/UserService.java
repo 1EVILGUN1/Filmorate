@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.inheritance.UserStorage;
 
-
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
+    private final FilmService filmService;
 
     public User createUser(User user) {
         return userStorage.createUser(user);
@@ -26,42 +27,36 @@ public class UserService {
         return userStorage.updateUser(user);
     }
 
+    public void deleteUser(long userId) {
+        userStorage.deleteUser(userId);
+    }
+
     public User getUser(long id) {
         return userStorage.getUser(id);
     }
 
-    public List<User> getUsers() {
+    public Collection<User> getUsers() {
         return userStorage.getUsers();
     }
 
-    public List<User> getAllFriends(@Positive long userId) {
-        User user = userStorage.getUser(userId);
-        List<User> friends = user.getFriends().stream()
-                .map(userStorage::getUser)
-                .toList();
-        log.trace("GET Запрос на список друзей пользователя с ID = {}\n{}", userId, friends);
-        return friends;
-    }
-
     public void addFriend(long userId, long friendId) {
-        userStorage.getUser(userId).getFriends().add(friendId);
-        userStorage.getUser(friendId).getFriends().add(userId);
-        log.debug("PUT Запрос. Пользователи с ID = {} и {} стали друзьями", userId, friendId);
+        userStorage.addFriend(userId, friendId);
     }
 
-    public void removeFriend(long userId, long friendId) {
-        userStorage.getUser(userId).getFriends().remove(friendId);
-        userStorage.getUser(friendId).getFriends().remove(userId);
-        log.debug("DELETE Запрос. Пользователь с ID = {} удалил друга с ID = {}", userId, friendId);
+    public void removeFromFriends(long userId, long friendId) {
+        userStorage.removeFromFriends(userId, friendId);
     }
 
-    public List<User> getCommonFriends(long userId, long otherId) {
-        List<User> commonFriends = userStorage.getUser(userId).getFriends().stream()
-                .filter(friendId -> userStorage.getUser(otherId).getFriends().contains(friendId))
-                .map(userStorage::getUser)
-                .toList();
-        log.trace("GET Запрос на список общих друзей пользователей с ID = {} и {}:\n{}", userId, otherId, commonFriends);
-        return commonFriends;
+    public List<User> getMutualFriends(long userId, long otherId) {
+        return userStorage.getMutualFriends(userId, otherId);
     }
 
+    public List<User> getAllFriends(long userId) {
+        return userStorage.getAllFriends(userId);
+    }
+
+    public List<Film> getRecommendations(long userId) {
+        getUser(userId);
+        return filmService.getRecommendations(userId);
+    }
 }
