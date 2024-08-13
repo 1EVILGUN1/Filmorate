@@ -27,8 +27,8 @@ import java.util.*;
 public class FilmDatabaseStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final UserStorage userStorage;
-    private final int SIZE_MPA = 5;
-    private final int SIZE_GENRE = 6;
+    static final int SIZE_MPA = 5;
+    static final int SIZE_GENRE = 6;
 
     @Override
     public Film createFilm(Film film) {

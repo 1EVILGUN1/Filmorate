@@ -16,12 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static ru.yandex.practicum.filmorate.storage.dao.FilmDatabaseStorage.SIZE_MPA;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class MpaDatabaseStorage implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final int SIZE_MPA = 5;
 
     @Override
     public Map<Integer, Mpa> getAllMpa() {
@@ -36,7 +37,7 @@ public class MpaDatabaseStorage implements MpaStorage {
 
     @Override
     public Optional<Mpa> getMpa(Integer id) {
-        if(id>SIZE_MPA){
+        if (id > SIZE_MPA) {
             throw new NotFoundException("Данного рейтинга не существует по id" + id);
         }
         String sqlQuery = "SELECT * FROM rating WHERE rating_id = ?";

@@ -16,12 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static ru.yandex.practicum.filmorate.storage.dao.FilmDatabaseStorage.SIZE_GENRE;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class GenreDatabaseStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final int SIZE_GENRE = 6;
 
     @Override
     public Map<Integer, Genre> getAllGenres() {
@@ -42,8 +43,7 @@ public class GenreDatabaseStorage implements GenreStorage {
         String sqlQuery = "SELECT * FROM genre WHERE genre_id = ?";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (genreRows.next()) {
-            Genre genre = new Genre(genreRows.getInt("genre_id"),
-                    genreRows.getString("genre_name"));
+            Genre genre = new Genre(genreRows.getInt("genre_id"), genreRows.getString("genre_name"));
             log.info("Найден жанр с id {}", id);
             return Optional.of(genre);
         }
