@@ -33,7 +33,7 @@ public class UserDatabaseStorage implements UserStorage {
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement ps =
-                            connection.prepareStatement(sqlQuery, new String[]{"user_id"});
+                            connection.prepareStatement(sqlQuery, new String[]{"id"});
                     ps.setString(1, user.getEmail());
                     ps.setString(2, user.getLogin());
                     ps.setDate(3, Date.valueOf(user.getBirthday()));
@@ -47,7 +47,7 @@ public class UserDatabaseStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        String sqlQuery = "UPDATE users SET email = ?, login = ?, birthday = ?, name = ? WHERE user_id = ?";
+        String sqlQuery = "UPDATE users SET email = ?, login = ?, birthday = ?, name = ? WHERE id = ?";
         if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
@@ -59,7 +59,7 @@ public class UserDatabaseStorage implements UserStorage {
     @Override
     public void deleteUser(long userId) {
         User user = getUser(userId);
-        String sqlQuery = "DELETE FROM users WHERE user_id = ?;";
+        String sqlQuery = "DELETE FROM users WHERE id = ?;";
         jdbcTemplate.update(sqlQuery, userId);
     }
 
@@ -76,14 +76,14 @@ public class UserDatabaseStorage implements UserStorage {
 
     @Override
     public User getUser(long id) {
-        String sqlQuery = "SELECT * FROM users WHERE user_id = ?";
+        String sqlQuery = "SELECT * FROM users WHERE id = ?";
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (userRows.next()) {
             User user = User.builder()
                     .email(userRows.getString("email"))
                     .login(userRows.getString("login"))
                     .name(userRows.getString("name"))
-                    .id(userRows.getLong("user_id"))
+                    .id(userRows.getLong("id"))
                     .birthday((Objects.requireNonNull(userRows.getDate("birthday"))).toLocalDate())
                     .build();
             log.info("Найден пользователь с id {}", id);
@@ -111,13 +111,13 @@ public class UserDatabaseStorage implements UserStorage {
     @Override
     public List<User> getAllFriends(long userId) {
         User user = getUser(userId);
-        String sqlQuery = "SELECT * FROM users AS u WHERE u.user_id IN (SELECT f.user_second_id FROM friendship AS f WHERE f.user_first_id = ?);";
+        String sqlQuery = "SELECT * FROM users AS u WHERE u.id IN (SELECT f.user_second_id FROM friendship AS f WHERE f.user_first_id = ?);";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId);
     }
 
     @Override
     public List<User> getMutualFriends(long userId, long otherUserId) {
-        String sqlQuery = "SELECT * FROM users AS u WHERE u.user_id IN (SELECT f.user_second_id FROM friendship AS f WHERE f.user_first_id = ? INTERSECT SELECT f.user_second_id FROM friendship AS f WHERE f.user_first_id = ?);";
+        String sqlQuery = "SELECT * FROM users AS u WHERE u.id IN (SELECT f.user_second_id FROM friendship AS f WHERE f.user_first_id = ? INTERSECT SELECT f.user_second_id FROM friendship AS f WHERE f.user_first_id = ?);";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId, otherUserId);
     }
 
@@ -127,7 +127,7 @@ public class UserDatabaseStorage implements UserStorage {
                 .email(rs.getString("EMAIL"))
                 .login(rs.getString("LOGIN"))
                 .name(rs.getString("NAME"))
-                .id(rs.getLong("USER_ID"))
+                .id(rs.getLong("ID"))
                 .birthday((rs.getDate("BIRTHDAY")).toLocalDate())
                 .build();
     }

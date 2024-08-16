@@ -11,10 +11,7 @@ import ru.yandex.practicum.filmorate.storage.inheritance.GenreStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.storage.dao.FilmDatabaseStorage.SIZE_GENRE;
 
@@ -40,17 +37,27 @@ public class GenreDatabaseStorage implements GenreStorage {
         if (id > SIZE_GENRE) {
             throw new NotFoundException("Данного жанра не существует по id" + id);
         }
-        String sqlQuery = "SELECT * FROM genre WHERE genre_id = ?";
+        String sqlQuery = "SELECT * FROM genre WHERE id = ?";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (genreRows.next()) {
-            Genre genre = new Genre(genreRows.getInt("genre_id"), genreRows.getString("genre_name"));
+            Genre genre = new Genre(genreRows.getInt("id"), genreRows.getString("name"));
             log.info("Найден жанр с id {}", id);
             return Optional.of(genre);
         }
         return Optional.empty();
     }
 
+    @Override
+    public List<Genre> getGenresOfFilm(long filmId) {
+        String queryForFilmGenres = "SELECT FG.FILM_ID, FG.GENRE_ID, G.NAME FROM FILM_GENRE FG JOIN GENRE G ON G.ID = FG.GENRE_ID WHERE FILM_ID = ?;";
+        return jdbcTemplate.query(queryForFilmGenres, this::makeGenre, filmId);
+    }
+
     private Genre mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
-        return new Genre(rs.getInt("genre_id"), rs.getString("genre_name"));
+        return new Genre(rs.getInt("id"), rs.getString("name"));
+    }
+
+    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
+        return new Genre(rs.getInt("GENRE_ID"), rs.getString("NAME"));
     }
 }

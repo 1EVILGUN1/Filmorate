@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.inheritance.UserStorage;
 
@@ -17,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
-    private final FilmService filmService;
 
     public User createUser(User user) {
         return userStorage.createUser(user);
@@ -55,8 +53,4 @@ public class UserService {
         return userStorage.getAllFriends(userId);
     }
 
-    public List<Film> getRecommendations(long userId) {
-        getUser(userId);
-        return filmService.getRecommendations(userId);
-    }
 }

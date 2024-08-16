@@ -11,10 +11,7 @@ import ru.yandex.practicum.filmorate.storage.inheritance.MpaStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.storage.dao.FilmDatabaseStorage.SIZE_MPA;
 
@@ -40,10 +37,10 @@ public class MpaDatabaseStorage implements MpaStorage {
         if (id > SIZE_MPA) {
             throw new NotFoundException("Данного рейтинга не существует по id" + id);
         }
-        String sqlQuery = "SELECT * FROM rating WHERE rating_id = ?";
+        String sqlQuery = "SELECT * FROM rating WHERE id = ?";
         SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (mpaRows.next()) {
-            Mpa mpa = new Mpa(mpaRows.getInt("rating_id"), mpaRows.getString("rating_name"));
+            Mpa mpa = new Mpa(mpaRows.getInt("id"), mpaRows.getString("name"));
             log.info("Найден рейтинг с id {}", id);
             return Optional.of(mpa);
         }
@@ -51,6 +48,6 @@ public class MpaDatabaseStorage implements MpaStorage {
     }
 
     private Mpa mapRowToMpa(ResultSet rs, int rowNum) throws SQLException {
-        return new Mpa(rs.getInt("rating_id"), rs.getString("rating_name"));
+        return new Mpa(rs.getInt("id"), rs.getString("name"));
     }
 }

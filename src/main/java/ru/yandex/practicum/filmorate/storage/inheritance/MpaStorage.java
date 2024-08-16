@@ -9,4 +9,6 @@ public interface MpaStorage {
     Map<Integer, Mpa> getAllMpa();
 
     Optional<Mpa> getMpa(Integer id);
+
+
 }
