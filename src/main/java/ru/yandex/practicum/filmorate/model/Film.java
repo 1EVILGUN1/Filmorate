@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validator.annotation.NullOrNotBlank;
 import ru.yandex.practicum.filmorate.validator.annotation.ReleaseDate;
@@ -12,11 +13,11 @@ import ru.yandex.practicum.filmorate.validator.group.Default;
 import ru.yandex.practicum.filmorate.validator.group.Update;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 @Data
+@Builder
 public class Film {
     @NotNull(groups = Update.class)
     @Positive(groups = Update.class)
@@ -35,6 +36,9 @@ public class Film {
     @Positive(groups = Default.class)
     private Integer duration;
 
-    private Set<Long> likesFilm = new HashSet<>();
+    @NotNull
+    private final Mpa mpa;
+    private final Set<Integer> likesFilm = new HashSet<>();
+    private final Set<Genre> genres = new LinkedHashSet<>();
 
 }
