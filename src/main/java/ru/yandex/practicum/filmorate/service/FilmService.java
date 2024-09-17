@@ -1,60 +1,35 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.controller.model.film.FilmDto;
+import ru.yandex.practicum.filmorate.controller.model.film.FilmRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.List;
-
+import java.util.*;
 
 @Service
-@Validated
-@Slf4j
-@RequiredArgsConstructor
-public class FilmService {
-    private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+public interface FilmService extends BaseService<FilmDto, FilmRequest> {
 
+    FilmDto get(Long id);
 
-    public Film createFilm(Film film) {
-        return filmStorage.createFilm(film);
-    }
+    List<FilmDto> getAll();
 
-    public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
-    }
+    FilmDto save(FilmRequest request);
 
-    public Film getFilm(long id) {
-        return filmStorage.getFilm(id);
-    }
+    FilmDto update(FilmRequest request);
 
-    public List<Film> getFilms() {
-        return filmStorage.getFilms();
-    }
+    boolean putLike(Long id, Long userId);
 
-    public void addLikeFilm(long filmId, long userId) {
-        userStorage.getUser(userId);
-        filmStorage.getFilm(filmId).getLikesFilm().add(userId);
-        log.debug("PUT Запрос. Пользователь с ID = {} лайкнул фильм с ID = {}", userId, filmId);
-    }
+    boolean deleteLike(Long id, Long userId);
 
-    public void removeLikeFilm(long filmId, long userId) {
-        userStorage.getUser(userId);
-        filmStorage.getFilm(filmId).getLikesFilm().remove(userId);
-        log.debug("DELETE Запрос. Пользователь с ID = {} удалил лайк у фильма с ID = {}", userId, filmId);
-    }
+    List<FilmDto> getCommonFilms(Long userId, Long friendId);
 
-    public List<Film> getPopularFilm(int count) {
-        List<Film> popularFilms = filmStorage.getFilms().stream()
-                .sorted((film1, film2) -> Integer.compare(film2.getLikesFilm().size(),
-                        film1.getLikesFilm().size()))
-                .limit(count)
-                .toList();
-        log.trace("GET Запрос. Список популярных фильмов:\n{}", popularFilms);
-        return popularFilms;
-    }
+    List<FilmDto> getTopFilms(int count, Long genreId, Integer year);
+
+    List<FilmDto> getDirectorsFilmsByYear(Long id);
+
+    List<FilmDto> getDirectorsFilmsByLikes(Long id);
+
+    List<FilmDto> getSearchFilm(String query);
+
+    List<FilmDto> getSearchDirector(String query);
 }
