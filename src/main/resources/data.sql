@@ -1,14 +1,18 @@
-INSERT INTO rating (name)
-VALUES ('G'),
-       ('PG'),
-       ('PG-13'),
-       ('R'),
-       ('NC-17');
+SET SCHEMA "public";
 
-INSERT INTO genre(name)
-VALUES ('Комедия'),
-       ('Драма'),
-       ('Мультфильм'),
-       ('Триллер'),
-       ('Документальный'),
-       ('Боевик');
+INSERT INTO "ratings" ("name")
+VALUES
+    ('G'),
+    ('PG'),
+    ('PG-13'),
+    ('R'),
+    ('NC-17');
+
+INSERT INTO "genres" ("name")
+VALUES
+    ('Комедия'),
+    ('Драма'),
+    ('Мультфильм'),
+    ('Триллер'),
+    ('Документальный'),
+    ('Боевик');

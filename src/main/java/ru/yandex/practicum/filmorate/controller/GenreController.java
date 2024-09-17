@@ -1,37 +1,28 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.Genre;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.controller.model.genre.GenreDto;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
-import java.util.Collection;
+import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
-@Slf4j
 @RequestMapping("/genres")
+@RequiredArgsConstructor
 public class GenreController {
     private final GenreService genreService;
 
-    @GetMapping
-    public Collection<Genre> getAllGenres() {
-        log.info("GET Запрос на получение списка жанров");
-        Collection<Genre> genres = genreService.getAllGenres();
-        log.info("GET Запрос на получение списка жанров выполнен {}", genres);
-        return genres;
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public GenreDto get(@PathVariable Long id) {
+        return genreService.get(id);
     }
 
-    @GetMapping("/{id}")
-    public Genre getGenreById(@NotNull @PathVariable int id) {
-        log.info("GET Запрос на получение жанра по id {}", id);
-        Genre genre = genreService.getGenreById(id);
-        log.info("GET Запрос на получение жанра выполнен {}", genre);
-        return genre;
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<GenreDto> getAll() {
+        return genreService.getAll();
     }
 }

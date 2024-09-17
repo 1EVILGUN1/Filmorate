@@ -1,19 +1,15 @@
 package ru.yandex.practicum.filmorate.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import lombok.Getter;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class ValidationException extends RuntimeException {
-    public ValidationException(String message) {
-        super(message);
+@Getter
+public class ValidationException extends IllegalArgumentException {
+    private final String parameter;
+    private final String reason;
+
+    public ValidationException(String parameter, String reason) {
+        this.parameter = parameter;
+        this.reason = reason;
     }
 
-    public ValidationException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ValidationException(Throwable cause) {
-        super(cause);
-    }
 }

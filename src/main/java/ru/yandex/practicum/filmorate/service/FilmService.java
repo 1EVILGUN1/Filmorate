@@ -1,70 +1,35 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.controller.model.film.FilmDto;
+import ru.yandex.practicum.filmorate.controller.model.film.FilmRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.exception.FilmDoesNotExistException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.inheritance.FilmStorage;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import java.util.*;
 
 @Service
-@Validated
-@Slf4j
-@RequiredArgsConstructor
-public class FilmService {
-    private final FilmStorage filmStorage;
+public interface FilmService extends BaseService<FilmDto, FilmRequest> {
 
-    public Film createFilm(Film film) {
-        return filmStorage.createFilm(film);
-    }
+    FilmDto get(Long id);
 
-    public Film updateFilm(Film film) {
-        if (filmStorage.getFilm(film.getId()) == null) {
-            log.warn("Данного id фильма не существует {}", film.getId());
-            throw new FilmDoesNotExistException();
-        }
-        return filmStorage.updateFilm(film);
-    }
+    List<FilmDto> getAll();
 
-    public void deleteFilm(long filmId) {
-        filmStorage.deleteFilm(filmId);
-    }
+    FilmDto save(FilmRequest request);
 
-    public Film getFilm(long id) {
-        Film film = filmStorage.getFilm(id);
-        if (film == null) {
-            throw new NotFoundException("Данного id фильма не существует " + film.getId());
-        }
-        return film;
-    }
+    FilmDto update(FilmRequest request);
 
-    public Collection<Film> getFilms() {
-        return filmStorage.getFilms();
-    }
+    boolean putLike(Long id, Long userId);
 
-    public void addLikeFilm(long filmId, long userId) {
-        filmStorage.addLike(filmId, userId);
-    }
+    boolean deleteLike(Long id, Long userId);
 
-    public void removeLikeFilm(long filmId, long userId) {
-        filmStorage.deleteLike(filmId, userId);
-    }
+    List<FilmDto> getCommonFilms(Long userId, Long friendId);
 
-    public List<Film> getPopularFilm(int count) {
-        return filmStorage.getFilms().stream()
-                .sorted((f1, f2) -> f2.getLikesFilm().size() - f1.getLikesFilm().size())
-                .limit(count)
-                .collect(Collectors.toList());
-    }
+    List<FilmDto> getTopFilms(int count, Long genreId, Integer year);
 
-    public List<Film> getRecommendations(long userId) {
-        return filmStorage.getRecommendations(userId);
-    }
+    List<FilmDto> getDirectorsFilmsByYear(Long id);
+
+    List<FilmDto> getDirectorsFilmsByLikes(Long id);
+
+    List<FilmDto> getSearchFilm(String query);
+
+    List<FilmDto> getSearchDirector(String query);
 }

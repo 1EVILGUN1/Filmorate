@@ -1,56 +1,23 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.inheritance.UserStorage;
+import ru.yandex.practicum.filmorate.controller.model.activity.ActivityDto;
+import ru.yandex.practicum.filmorate.controller.model.film.FilmDto;
+import ru.yandex.practicum.filmorate.controller.model.user.UserDto;
+import ru.yandex.practicum.filmorate.controller.model.user.UserRequest;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
-@Service
-@Slf4j
-@Validated
-@RequiredArgsConstructor
-public class UserService {
-    private final UserStorage userStorage;
+public interface UserService extends BaseService<UserDto, UserRequest> {
+    List<UserDto> getFriends(Long id);
 
-    public User createUser(User user) {
-        return userStorage.createUser(user);
-    }
+    Set<UserDto> getCommonFriends(Long id, Long otherId);
 
-    public User updateUser(User user) {
-        return userStorage.updateUser(user);
-    }
+    boolean addFriend(Long id, Long otherId);
 
-    public void deleteUser(long userId) {
-        userStorage.deleteUser(userId);
-    }
+    boolean deleteFriend(Long id, Long otherId);
 
-    public User getUser(long id) {
-        return userStorage.getUser(id);
-    }
+    List<FilmDto> getRecommendations(Long userId);
 
-    public Collection<User> getUsers() {
-        return userStorage.getUsers();
-    }
-
-    public void addFriend(long userId, long friendId) {
-        userStorage.addFriend(userId, friendId);
-    }
-
-    public void removeFromFriends(long userId, long friendId) {
-        userStorage.removeFromFriends(userId, friendId);
-    }
-
-    public List<User> getMutualFriends(long userId, long otherId) {
-        return userStorage.getMutualFriends(userId, otherId);
-    }
-
-    public List<User> getAllFriends(long userId) {
-        return userStorage.getAllFriends(userId);
-    }
-
+    List<ActivityDto> getUserFeed(Long id);
 }
