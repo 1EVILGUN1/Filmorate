@@ -3,7 +3,7 @@
 ![JDBC](https://img.shields.io/badge/JDBC-3.1-orange)
 ![Lombok](https://img.shields.io/badge/Lombok-1.18.34-red)
 ![JUnit](https://img.shields.io/badge/JUnit-5-orange)
-![Spring Boot](https://img.shields.io/badge/Spring-Boot-3.2.4-green)
+![SpringBoot](https://img.shields.io/badge/Spring-Boot-3.2.4-green)
 ![Maven](https://img.shields.io/badge/Maven-4.0.0-blue)
 ![H2](https://img.shields.io/badge/H2-2.3-blue)
 
