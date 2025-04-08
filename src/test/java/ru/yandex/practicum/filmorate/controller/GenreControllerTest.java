@@ -8,7 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.yandex.practicum.filmorate.service.impl.GenreServiceImpl;
+import ru.yandex.practicum.filmorate.genre.controller.GenreController;
+import ru.yandex.practicum.filmorate.genre.service.GenreServiceImpl;
 
 @WebMvcTest(GenreController.class)
 public class GenreControllerTest {

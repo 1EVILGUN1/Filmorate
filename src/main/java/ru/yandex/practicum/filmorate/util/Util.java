@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.util;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.repository.Repository;
+import ru.yandex.practicum.filmorate.pubRepository.Repository;
 
 public class Util {
 

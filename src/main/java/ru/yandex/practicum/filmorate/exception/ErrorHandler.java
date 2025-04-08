@@ -6,32 +6,30 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Map;
-
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> notFoundException(final  NotFoundException e) {
-        return Map.of("error", e.getMessage());
+    public ErrorResponse handleNotFoundException(NotFoundException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(ElementNotExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> elementNotExistsException(final  ElementNotExistsException e) {
-        return Map.of("error", e.getMessage());
+    public ErrorResponse handleElementNotExistsException(ElementNotExistsException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> validException(final ValidationException e) {
-        return Map.of(e.getParameter(), e.getReason());
+    public ErrorResponse handleValidationException(ValidationException e) {
+        return new ErrorResponse(e.getParameter() + ": " + e.getReason());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(UnexpectedTypeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> unexpectedTypeException(final UnexpectedTypeException e) {
-        return Map.of("error", e.getMessage());
+    public ErrorResponse handleUnexpectedTypeException(UnexpectedTypeException e) {
+        return new ErrorResponse("Validation error: " + e.getMessage());
     }
 }
