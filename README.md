@@ -1,5 +1,7 @@
 # 🎬 Filmorate — Ваш персональный гид в мире кино
 
+![Filmorate Banner](image_filmorate.jpeg)
+
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-3.2.4-green)
 ![JDBC](https://img.shields.io/badge/JDBC-3.1-orange)
