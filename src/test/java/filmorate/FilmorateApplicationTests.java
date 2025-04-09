@@ -1,0 +1,5 @@
+package filmorate;
+
+class FilmorateApplicationTests {
+
+}
